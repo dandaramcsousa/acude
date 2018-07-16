@@ -10,8 +10,8 @@ int ledState[6] = {LOW, LOW, LOW, LOW, LOW, LOW}; // ledState used to set the LE
 long previousMillis[6] = {0,0,0,0,0,0};        // will store last time LED was updated
 
 long interval[6] = {0,0,0,0,0,0};           // interval at which to blink (milliseconds)
-const unsigned long OFFTIME = 5000UL;
-unsigned long ONTIME[6] = {3000UL, 3000UL, 3000UL, 3000UL, 3000UL, 3000UL};
+const unsigned long ONTIME = 3000UL;
+unsigned long OFFTIME[6] = {5000UL, 5000UL, 5000UL, 5000UL, 5000UL, 5000UL};
 
 IRrecv irrecv(IRPIN);
 
@@ -38,12 +38,12 @@ void toggleLED (int n, unsigned long currentMillis )
 
     if (ledState[n] == LOW)
     {
-      interval[n] = ONTIME[n];
+      interval[n] = OFFTIME[n];
       ledState[n] = HIGH;
     }
     else
     {
-      interval[n] = OFFTIME;
+      interval[n] = ONTIME;
       ledState[n] = LOW;
     }
     digitalWrite(irLEDPin[n], ledState[n]);  
@@ -57,9 +57,10 @@ void loop()
     irrecv.resume();
     switch (result.value) {
       case 16582903:
-        Serial.println("Botão 1");
-        break;
-
+        Serial.println("Botao 1");
+      	OFFTIME[0] = OFFTIME[0] - 200;
+        Serial.println(OFFTIME[0]);
+      	break;
         delay(1);
     }
   }
@@ -84,6 +85,3 @@ void loop()
     toggleLED (5, currentMillis);
   }
 }
-
-
-
