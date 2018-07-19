@@ -8,7 +8,8 @@ int irLEDPin[6] = {8,9,10,11,12,13};
 // Variables will change:
 int ledState[6] = {LOW, LOW, LOW, LOW, LOW, LOW}; // ledState used to set the LED
 long previousMillis[6] = {0,0,0,0,0,0};        // will store last time LED was updated
-
+int cont[6] = {0,0,0,0,0,0};
+const ceiling = 6000;
 long interval[6] = {0,0,0,0,0,0};           // interval at which to blink (milliseconds)
 const unsigned long ONTIME = 3000;
 unsigned long OFFTIME[6] = {5000, 5000, 5000, 5000, 5000, 5000};
@@ -58,7 +59,8 @@ void loop()
     switch (result.value) {
       case 16582903:
         Serial.println("Botao 1");
-      	OFFTIME[0] = OFFTIME[0] - 200;
+        cont[0] = cont[0] + 1;
+      	OFFTIME[0] = ceiling - (sqrt(cont[0])*1000);
         Serial.println(OFFTIME[0]);
       	break;
         delay(1);
