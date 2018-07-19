@@ -1,18 +1,31 @@
 #include <IRremote.h>
 
-int IRPIN = 4; //pino do receptor IR
+const int CEILING = 5000;
+const int FLOOR = 300;
+const int COEFICIENT = 1000;
 
-// leds controláveis
-int irLEDPin[6] = {8,9,10,11,12,13};
+const int IRPIN = 4; //pino do receptor IR
 
-// Variables will change:
+// leds counterroláveis
+const int irLEDPin[6] = {8,9,10,11,12,13};
+
+//const int BUTTON[7] = {16738455, 16724175, 16718055, 16743045, 16716015, 16726215, 16734885};
+
 int ledState[6] = {LOW, LOW, LOW, LOW, LOW, LOW}; // ledState used to set the LED
-long previousMillis[6] = {0,0,0,0,0,0};        // will store last time LED was updated
-int cont[6] = {0,0,0,0,0,0};
-const ceiling = 6000;
-long interval[6] = {0,0,0,0,0,0};           // interval at which to blink (milliseconds)
-const unsigned long ONTIME = 3000;
-unsigned long OFFTIME[6] = {5000, 5000, 5000, 5000, 5000, 5000};
+int counter[6] = {1, 1, 1, 1, 1, 1};
+unsigned long blink_time[6] = {CEILING, CEILING, CEILING, CEILING, CEILING, CEILING};
+long interval[6] = {0,0,0,0,0,0}; // interval at which to blink (milliseconds)
+long previousMillis[6] = {0, 0, 0, 0, 0, 0}; // will store last time LED was updated
+
+void blinkar(int button) {
+  Serial.print("Botao ");
+  Serial.println(button + 1);
+  counter[button] = counter[button] + 1;
+  if (blink_time[button] >= FLOOR)
+    blink_time[button] = CEILING - (sqrt(counter[button])*COEFICIENT);
+    Serial.println(counter[button]);
+    Serial.println(blink_time[button]);
+}
 
 IRrecv irrecv(IRPIN);
 
@@ -38,15 +51,10 @@ void toggleLED (int n, unsigned long currentMillis )
     previousMillis[n] = currentMillis;
 
     if (ledState[n] == LOW)
-    {
-      interval[n] = ONTIME;
       ledState[n] = HIGH;
-    }
     else
-    {
-      interval[n] = OFFTIME[n];
       ledState[n] = LOW;
-    }
+  
     digitalWrite(irLEDPin[n], ledState[n]);  
   }
 
@@ -54,36 +62,45 @@ void loop()
 {
   if (irrecv.decode(&result))
   {
-    Serial.println(result.value);
+    //Serial.println(result.value);
     irrecv.resume();
     switch (result.value) {
-      case 16582903:
-        Serial.println("Botao 1");
-        cont[0] = cont[0] + 1;
-      	OFFTIME[0] = ceiling - (sqrt(cont[0])*1000);
-        Serial.println(OFFTIME[0]);
+      case 16738455:
+        Serial.println("Botao 0");
+        for (int i = 0; i < 6; i++) {
+          ledState[i] = LOW;
+          counter[i] = 1;
+          blink_time[i] = CEILING;
+          interval[i] = 0;
+          previousMillis[i] = 0;  
+        }
+      case 16724175:
+        blinkar(0);
       	break;
-        delay(1);
+      case 16718055:
+        blinkar(1);
+        break;  
     }
+    delay(1);
   }
   unsigned long currentMillis = millis();
 
-  if (currentMillis - previousMillis[0] > interval[0]) {
+  if (currentMillis - previousMillis[0] > blink_time[0]) {
   toggleLED (0, currentMillis);
   }
-  if (currentMillis - previousMillis[1] > interval[1]) {
+  if (currentMillis - previousMillis[1] > blink_time[1]) {
     toggleLED (1, currentMillis);
   }
-  if (currentMillis - previousMillis[2] > interval[2]) {
+  if (currentMillis - previousMillis[2] > blink_time[2]) {
     toggleLED (2, currentMillis);
   }
-  if (currentMillis - previousMillis[3] > interval[3]) {
+  if (currentMillis - previousMillis[3] > blink_time[3]) {
     toggleLED (3, currentMillis);
   }
-  if (currentMillis - previousMillis[4] > interval[4]) {
+  if (currentMillis - previousMillis[4] > blink_time[4]) {
     toggleLED (4, currentMillis);
   }
-  if (currentMillis - previousMillis[5] > interval[5]) {
+  if (currentMillis - previousMillis[5] > blink_time[5]) {
     toggleLED (5, currentMillis);
   }
 }
