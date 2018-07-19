@@ -79,7 +79,19 @@ void loop()
       	break;
       case 16718055:
         blinkar(1);
-        break;  
+        break; 
+      case 16743045:
+        blinkar(2);
+        break;
+      case 16716015:
+        blinkar(3);
+        break;
+      case 16726215:
+        blinkar(4);
+        break;
+      case 16734885:
+        blinkar(4);
+        break;
     }
     delay(1);
   }
