@@ -14,8 +14,8 @@ const int irLEDPin[6] = {8,9,10,11,12,13};
 int ledState[6] = {LOW, LOW, LOW, LOW, LOW, LOW}; // ledState used to set the LED
 int counter[6] = {1, 1, 1, 1, 1, 1};
 unsigned long blink_time[6] = {CEILING, CEILING, CEILING, CEILING, CEILING, CEILING};
-long interval[6] = {0,0,0,0,0,0}; // interval at which to blink (milliseconds)
-long previousMillis[6] = {0, 0, 0, 0, 0, 0}; // will store last time LED was updated
+unsigned long interval[6] = {0,0,0,0,0,0}; // interval at which to blink (milliseconds)
+unsigned long previousMillis[6] = {0, 0, 0, 0, 0, 0}; // will store last time LED was updated
 
 void blinkar(int button) {
   Serial.print("Botao ");
@@ -44,6 +44,7 @@ void setup() {
   pinMode(irLEDPin[3], OUTPUT);
   pinMode(irLEDPin[4], OUTPUT);
   pinMode(irLEDPin[5], OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
 }
 
 void toggleLED (int n, unsigned long currentMillis )
@@ -64,6 +65,7 @@ void loop()
   {
     //Serial.println(result.value);
     irrecv.resume();
+    digitalWrite(LED_BUILTIN, LOW);
     switch (result.value) {
       case 16738455:
         Serial.println("Botao 0");
@@ -76,21 +78,27 @@ void loop()
         }
       case 16724175:
         blinkar(0);
+        digitalWrite(LED_BUILTIN, HIGH);
       	break;
       case 16718055:
         blinkar(1);
+        digitalWrite(LED_BUILTIN, HIGH);
         break; 
       case 16743045:
         blinkar(2);
+        digitalWrite(LED_BUILTIN, HIGH);
         break;
       case 16716015:
         blinkar(3);
+        digitalWrite(LED_BUILTIN, HIGH);
         break;
       case 16726215:
         blinkar(4);
+        digitalWrite(LED_BUILTIN, HIGH);
         break;
       case 16734885:
-        blinkar(4);
+        blinkar(5);
+        digitalWrite(LED_BUILTIN, HIGH);
         break;
     }
     delay(1);
